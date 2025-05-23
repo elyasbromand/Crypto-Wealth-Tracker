@@ -32,6 +32,7 @@ _Track your coins in real-time!_
 
 
 git clone https://github.com/yourusername/crypto-wealth-tracker.git
+
 cd crypto-wealth-tracker
 
 npm install
