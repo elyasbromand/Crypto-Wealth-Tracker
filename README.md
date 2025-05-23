@@ -35,12 +35,16 @@ _Track your coins in real-time!_
 git clone https://github.com/yourusername/crypto-wealth-tracker.git
 cd crypto-wealth-tracker
 
+---
+
 2. Install dependencies
 ```bash
 npm install
 
+---
 3. Run the development server
 ```bash
 node index.js
 
+---
 Happy Tracking 
