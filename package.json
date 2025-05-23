@@ -1,0 +1,19 @@
+{
+  "name": "final_publicapi_project",
+  "version": "1.0.0",
+  "description": "Public API project",
+  "license": "ISC",
+  "author": "Elyas Bromand",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
+}

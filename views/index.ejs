@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Real-Time Crypto Wealth Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen">
+  <div class="max-w-7xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-center mb-6">Crypto Wealth Tracker</h1>
+
+    <!-- Layout Wrapper -->
+    <div class="flex flex-col gap-8 md:flex-row">
+      
+      <!-- FORM CARD LEFT -->
+      <div class="w-full md:w-1/3 bg-white rounded-xl shadow-md p-6 flex flex-col">
+        <h2 class="text-xl font-semibold mb-4 text-center">Enter Your Holdings</h2>
+        <form action="/" method="POST" class="space-y-4 flex-grow">
+          <% coins.forEach(coin => { %>
+            <div class="flex items-center justify-between space-x-4">
+              <div class="flex items-center space-x-2 w-1/2">
+                <img src="<%= coin.image || coinsImage.image %>" alt="<%= coin.name %>" class="w-6 h-6 rounded-full" />
+                <label class="font-medium">
+                  <%= coin.name %> (<%= coin.symbol %>)<br>
+                  <span class="text-sm text-gray-500">$<%= coin.price %></span>
+                </label>
+              </div>
+              <input
+                type="number"
+                step="any"
+                name="<%= coin.id %>"
+                placeholder="e.g. 1.2"
+                class="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-500"
+              />
+            </div>
+          <% }) %>
+
+          <button type="submit" class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700">
+            Track My Wealth
+          </button>
+        </form>
+      </div>
+
+      <!-- RESULTS TABLE RIGHT -->
+      <div class="w-full md:w-2/3 bg-white rounded-xl shadow-md p-6 overflow-x-auto">
+        <% if (results) { %>
+          <h2 class="text-2xl font-bold text-center mb-4">Portfolio Summary</h2>
+          <table class="w-full border-collapse table-auto">
+            <thead>
+              <tr class="bg-gray-200 text-left">
+                <th class="p-3">Coin</th>
+                <th class="p-3">Amount</th>
+                <th class="p-3">Price (USD)</th>
+                <th class="p-3">Value (USD)</th>
+                <th class="p-3">24h Change</th>
+                <th class="p-3">Sparkline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% results.items.forEach(item => { %>
+                <tr class="border-t">
+                  <td class="p-3 font-semibold flex items-center space-x-2">
+                    <img src="<%= item.image %>" alt="<%= item.name %>" class="w-6 h-6 rounded-full" />
+                    <span><%= item.name %> (<%= item.symbol %>)</span>
+                  </td>
+                  <td class="p-3"><%= item.amount %></td>
+                  <td class="p-3">$<%= item.price.toLocaleString() %></td>
+                  <td class="p-3 font-medium">$<%= item.value.toFixed(2).toLocaleString() %></td>
+                  <td class="p-3 font-medium <%= item.change >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                    <%= item.change.toFixed(2) %>%
+                  </td>
+                  <td class="p-3">
+                    <canvas id="chart-<%= item.symbol %>" width="100" height="40"></canvas>
+                    <script>
+                      (function() {
+                        const symbol = '<%= item.symbol %>';
+                        const ctx = document.getElementById('chart-' + symbol).getContext('2d');
+                        const sparklineData = JSON.parse(`<%- JSON.stringify(item.sparkline) %>`);
+
+                        new Chart(ctx, {
+                          type: 'line',
+                          data: {
+                            labels: Array(sparklineData.length).fill(''),
+                            datasets: [{
+                              data: sparklineData,
+                              borderColor: 'rgba(0, 150, 255, 0.9)',
+                              borderWidth: 2,
+                              pointRadius: 0,
+                              tension: 0.4,
+                              fill: {
+                                target: 'origin',
+                                above: 'rgba(0, 150, 255, 0.2)',
+                              }
+                            }]
+                          },
+                          options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { 
+                              legend: { display: false } 
+                            },
+                            scales: {
+                              x: { display: false },
+                              y: { 
+                                display: false,
+                                beginAtZero: false
+                              }
+                            }
+                          }
+                        });
+                      })();
+                    </script>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+
+          <div class="mt-6 text-xl font-bold text-center text-blue-600">
+            Total Portfolio Value: $<%= results.total %>
+          </div>
+        <% } else { %>
+          <h1 class="text-center text-gray-500">ADD A Value to see your Portfolio</h1>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <!-- FOOTER -->
+<footer class="mt-16 bg-white shadow-inner border-t border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500">
+    <p class="text-center md:text-left mb-2 md:mb-0">
+      &copy; <%= new Date().getFullYear() %> Crypto Wealth Tracker. All rights reserved.
+    </p>
+    <div class="flex space-x-4">
+      <a href="https://www.coingecko.com/en/api" target="_blank" class="hover:text-blue-600 transition">CoinGecko API</a>
+      <a href="https://www.coingecko.com/en/api/documentation" target="_blank" class="hover:text-blue-600 transition">API Documentation</a>
+      <a href="https://github.com/yourgithub" target="_blank" class="hover:text-blue-600 transition">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
