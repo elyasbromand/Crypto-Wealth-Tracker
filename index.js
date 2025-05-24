@@ -17,7 +17,7 @@ const supportedCoins = [
   { id: "ripple", symbol: "XRP", name: "XRP" },
 ];
 
-// ✅ Use a custom axios instance with User-Agent header
+
 const coingecko = axios.create({
   baseURL: "https://api.coingecko.com/api/v3",
   headers: {
@@ -96,7 +96,7 @@ app.post("/", async (req, res) => {
       const value = amount * coin.current_price;
       const change = coin.price_change_percentage_24h;
 
-      // 📊 Fetch sparkline data
+      // Fetch sparkline data
       let sparkline = [];
       try {
         const sparklineResponse = await coingecko.get(`/coins/${coin.id}/market_chart`, {
