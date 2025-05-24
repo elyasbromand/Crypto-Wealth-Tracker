@@ -19,10 +19,7 @@ const supportedCoins = [
 
 
 const coingecko = axios.create({
-  baseURL: "https://api.coingecko.com/api/v3",
-  headers: {
-    "User-Agent": "CryptoWealthTracker/1.0 (support@example.com)",
-  },
+  baseURL: "https://api.coingecko.com/api/v3"
 });
 
 // Middleware
