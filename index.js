@@ -17,7 +17,6 @@ const supportedCoins = [
   { id: "ripple", symbol: "XRP", name: "XRP" },
 ];
 
-
 const coingecko = axios.create({
   baseURL: "https://api.coingecko.com/api/v3",
   headers: {
@@ -100,9 +99,12 @@ app.post("/", async (req, res) => {
       // Fetch sparkline data
       let sparkline = [];
       try {
-        const sparklineResponse = await coingecko.get(`/coins/${coin.id}/market_chart`, {
-          params: { vs_currency: "usd", days: 7 },
-        });
+        const sparklineResponse = await coingecko.get(
+          `/coins/${coin.id}/market_chart`,
+          {
+            params: { vs_currency: "usd", days: 7 },
+          }
+        );
         sparkline = sparklineResponse.data.prices.map((p) => p[1]);
       } catch (sparkErr) {
         console.error(`Sparkline error for ${coin.id}:`, sparkErr.message);
